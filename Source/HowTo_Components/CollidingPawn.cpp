@@ -2,7 +2,6 @@
 
 
 #include "CollidingPawn.h"
-
 #include "UObject/ConstructorHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SphereComponent.h"
@@ -79,4 +78,3 @@ void ACollidingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
