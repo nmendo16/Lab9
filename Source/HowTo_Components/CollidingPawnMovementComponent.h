@@ -1,6 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -8,12 +6,14 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "CollidingPawnMovementComponent.generated.h"
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+/**
+	*
+	*/
+UCLASS()
 class HOWTO_COMPONENTS_API UCollidingPawnMovementComponent : public UPawnMovementComponent
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType,
-        FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "CollidingPawn.h"
+#include "CollidingPawnMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SphereComponent.h"
@@ -56,13 +56,17 @@ ACollidingPawn::ACollidingPawn()
 
 	// Take control of the default player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	// Create an instance of our movement component, and tell it to update our root component.
+	OurMovementComponent = CreateDefaultSubobject<UCollidingPawnMovementComponent>(TEXT("CustomMovementComponent"));
+	OurMovementComponent->UpdatedComponent = RootComponent;
 }
 
 // Called when the game starts or when spawned
 void ACollidingPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -73,8 +77,49 @@ void ACollidingPawn::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void ACollidingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACollidingPawn::SetupPlayerInputComponent(class UInputComponent* InInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(InInputComponent);
 
+	InInputComponent->BindAction("ParticleToggle", IE_Pressed, this, &ACollidingPawn::ParticleToggle);
+
+	InInputComponent->BindAxis("MoveForward", this, &ACollidingPawn::MoveForward);
+	InInputComponent->BindAxis("MoveRight", this, &ACollidingPawn::MoveRight);
+	InInputComponent->BindAxis("Turn", this, &ACollidingPawn::Turn);
+}
+
+UPawnMovementComponent* ACollidingPawn::GetMovementComponent() const
+{
+	return OurMovementComponent;
+}
+
+void ACollidingPawn::MoveForward(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorForwardVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::MoveRight(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorRightVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::Turn(float AxisValue)
+{
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += AxisValue;
+	SetActorRotation(NewRotation);
+}
+
+void ACollidingPawn::ParticleToggle()
+{
+	if (OurParticleSystem && OurParticleSystem->Template)
+	{
+		OurParticleSystem->ToggleActive();
+	}
 }
